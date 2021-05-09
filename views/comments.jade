@@ -1,0 +1,21 @@
+extends layout
+
+block content
+  h1= title + " : "
+    span.text-success= issue.fields.summary
+  h5 Description
+  p.ml-2.mb-4= issue.fields.description
+
+  h5 Comments
+
+  each comment in comments
+    .comment.d-flex.mb-3
+      .img-container
+        img.mr-2(width="48" src=comment.updateAuthor.avatarUrls['48x48'])
+      .text-container
+        span.mr-2=comment.updateAuthor.displayName
+        span=comment.updated
+        p.mt-3= comment.bodyif 
+  
+
+

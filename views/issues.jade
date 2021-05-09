@@ -1,0 +1,91 @@
+extends layout
+
+block content
+  .d-flex.justify-content-between
+    .header
+      h1= title + " : "
+        span.text-success= project.name
+
+    .search-bar.pull-right
+      //- input(type="text" id="reporter" placeholder="Filter by reporter")
+      .form-inline.mt-1
+        input.form-control.mr-sm-2#reporter(type="text" placeholder="Filter by Reporter" aria-label="Filter")
+        button.btn.btn-outline-success.my-2.my-sm-0#filter(type="button") Filter
+  //- p Welcome to #{title}
+  table.table
+    thead
+      tr
+        th T
+        th Key
+        th Summary
+        th Reporter
+        th Assignee
+        th Status
+        th Created
+    tbody.show-table
+      each issue in issues
+        tr
+          td
+            img(width='20' src=issue.fields.issuetype.iconUrl)
+          td
+            a(href="/comments/" + issue.key)=issue.key
+          td
+            a(href="/comments/" + issue.key)= issue.fields.summary
+          td= issue.fields.reporter.displayName
+          td
+            if issue.fields.assignee != null
+              img.mr-3(width='24' src=issue.fields.assignee.avatarUrls['24x24'] || null)
+              span= issue.fields.assignee.displayName
+            else
+              span Unnamed
+          td= issue.fields.status.name
+          td= issue.fields.created
+
+  script.
+    $(document).ready(function(){
+      $('#filter').on('click', function(){
+        let reporter = $('#reporter').val()
+
+        $.ajax({
+          url: "./filter",
+          type:"POST",
+          data: {
+            reporter
+          },
+          success: reGridTable
+        })
+      })
+    })
+
+    $('#reporter').on('keyup', function(event) {
+      if (event.keyCode == 13) {
+        $('#filter').click()
+      }
+    })
+
+    function reGridTable(data) {
+      console.log(data)
+      html = ""
+      data.issues.map(item => {
+        html += "<tr>";
+        html += "<td><img width'20' src='" + item.fields.issuetype.iconUrl + "'></td>"
+        html += "<td><a href='/comments/" + item.key + "'>" + item.key + "</a></td>"
+        html += "<td><a href='/comments/" + item.key + "'>" + item.fields.summary + "</a></td>"
+        html += "<td>" + item.fields.reporter.displayName + "</td>"
+        html += "<td>"
+        if (item.fields.assignee) {
+          html += "<img class='mr-3' width='24' src='" + item.fields.assignee.avatarUrls['24x24'] + "'>"
+          html += "<span>" + item.fields.assignee.displayName + "</span>"
+        }else{
+          html += "<span> Unnamed </span>" 
+        }
+        html += "</td>"
+        html += "<td>" + item.fields.status.name + "</td>"
+        html += "<td>" + item.fields.created + "</td>"
+        html += "</tr>"
+      })  
+      $('.show-table').html(html)
+    }
+
+
+

@@ -1,0 +1,26 @@
+extends layout
+
+block content
+  h1= title
+  //- p Welcome to #{title}
+  table.table
+    thead
+      tr
+        th Name
+        th Key
+        th Type
+        th Lead
+    tbody
+      each project in projects
+        tr
+          td
+            img.mr-3(width="32" src=project.avatarUrls['32x32'])
+            a(href="/project/" + project.key)= project.name
+          td= project.key
+          td= project.style + " " + project.projectTypeKey
+          td
+            img.mr-3(width="32" src=project.lead.avatarUrls['32x32'])
+            a(href="#")= project.lead.displayName
+          
+
+
